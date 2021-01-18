@@ -12,7 +12,7 @@ struct Constants {
     static let APIKey = "APIKEY123"
     static let APISecret = "QVBJU0VDUkVUMTIz"
     static let APIPhrase = "APIPHRASE123"
-    static let Timeout = 2.0
+    static let Timeout:DispatchTimeInterval = .seconds(2)
     
     static let JSONSimpleArray = "request-array-simple"
     static let JSONSimpleObject = "request-object-simple"

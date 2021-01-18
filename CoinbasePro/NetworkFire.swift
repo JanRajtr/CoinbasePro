@@ -6,6 +6,7 @@
 //  Copyright © 2018 Martin Walsh. All rights reserved.
 //
 
+import Foundation
 import Alamofire
 
 struct NetworkFire: Loggable, Networkable {
@@ -23,16 +24,16 @@ struct NetworkFire: Loggable, Networkable {
             headers.forEach {
                 urlRequest.setValue($0.value, forHTTPHeaderField: $0.key)
             }
-            request = Alamofire.request(urlRequest)
+            request = AF.request(urlRequest)
         } else {
-            request = Alamofire.request(requestURL, method: HTTPMethod(rawValue: method)!, parameters: parameters, headers: headers)
+            request = AF.request(requestURL, method: HTTPMethod(rawValue: method), parameters: parameters, headers: HTTPHeaders(headers))
         }
 
         request
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .responseJSON { response in
-                self.logger.debug(response.timeline.description)
+                self.logger.debug(response.metrics.debugDescription)
                 switch response.result {
                 case .success:
                     var pagination: Pagination?

@@ -8,7 +8,8 @@
 
 import Quick
 import Nimble
-import OHHTTPStubs
+import OHHTTPStubsSwift
+import Foundation
 @testable import CoinbasePro
 
 private let Host = "test.localhost"
@@ -25,21 +26,17 @@ class NetworkFireSpec: QuickSpec {
             beforeEach {
                 network = NetworkFire()
                 stub(condition: isHost(Host) && isPath("/simple") && isMethodGET()) { _ in
-                    return OHHTTPStubsResponse(data: JSONData(fromFile: Constants.JSONSimpleObject), statusCode: 200, headers: ["Content-Type":"application/json"])
+                    return fixture(filePath: Constants.JSONSimpleObject, status: 200, headers: ["Content-Type":"application/json"])
                     }.name = "Success JSON 200"
                 stub(condition: isHost(Host) && isPath("/simple") && isMethodPOST() && hasBody("JSON_BODY".data(using: .utf8)!)) { _ in
-                    return OHHTTPStubsResponse(data: JSONData(fromFile: Constants.JSONSimpleObject), statusCode: 200, headers: ["Content-Type":"application/json"])
+                    return fixture(filePath: Constants.JSONSimpleObject, status: 200, headers: ["Content-Type":"application/json"])
                     }.name = "Success JSON 200"
                 stub(condition: isHost(Host) && isPath("/simple/fail-with-error") && isMethodGET()) { _ in
-                    return OHHTTPStubsResponse(data: JSONData(fromFile: Constants.JSONAPIErrorObject), statusCode: 400, headers: ["Content-Type":"application/json"])
+                    return fixture(filePath: Constants.JSONAPIErrorObject, status: 400, headers: ["Content-Type":"application/json"])
                     }.name = "Failure JSON 400 with Error JSON"
                 stub(condition: isHost(Host) && isPath("/simple/fail") && isMethodGET()) { _ in
-                    return OHHTTPStubsResponse(data: "".data(using: .utf8)!, statusCode: 400, headers: ["Content-Type":"application/json"])
+                    return fixture(filePath: "", status: 400, headers: ["Content-Type":"application/json"])
                     }.name = "Failure JSON 400"
-            }
-
-            afterEach {
-                OHHTTPStubs.removeAllStubs()
             }
 
             it("should yield success JSON data on GET") {
